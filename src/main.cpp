@@ -104,7 +104,7 @@ int main() {
             std::cout << "Device name:  " << deviceName.data() << std::endl;
 
             cl_device_type device_type;
-            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_TYPE, sizeof(cl_device_type), &device_type, 0));
+            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_TYPE, sizeof(cl_device_type), &device_type, nullptr));
             std::cout << "  Device type: ";
             if (device_type & CL_DEVICE_TYPE_CPU)
               std::cout << "CPU";
@@ -117,15 +117,15 @@ int main() {
             std::cout << std::endl;
 
             cl_ulong sizeInBytes;
-            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &sizeInBytes, 0));
+            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &sizeInBytes, nullptr));
             std::cout << "Device memory size:  " << sizeInBytes / 1024. / 1024. << " MBs" << std::endl;
 
-            cl_ulong sizeMemCache;
-            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE, sizeof(cl_ulong), &sizeMemCache, 0));
+            cl_uint sizeMemCache;
+            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE, sizeof(cl_uint), &sizeMemCache, nullptr));
             std::cout << "Size of global memory cache line in bytes: " << sizeMemCache << std::endl;
 
             cl_uint maxFreq;
-            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(cl_uint), &maxFreq, 0));
+            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(cl_uint), &maxFreq, nullptr));
             std::cout << "Maximum configured clock frequency of the device in MHz: " << maxFreq << std::endl;
 
 
