@@ -121,11 +121,11 @@ int main() {
     // или же через метод Buffer Objects -> clEnqueueWriteBuffer
     // И хорошо бы сразу добавить в конце clReleaseMemObject (аналогично, все дальнейшие ресурсы вроде OpenCL под-программы, кернела и т.п. тоже нужно освобождать)
 
-    cl_mem as_mem = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * n, as.data(), &errcode_res);
+    cl_mem as_mem = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(float) * n, as.data(), &errcode_res);
     OCL_SAFE_CALL(errcode_res);
-    cl_mem bs_mem = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * n, bs.data(), &errcode_res);
+    cl_mem bs_mem = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(float) * n, bs.data(), &errcode_res);
     OCL_SAFE_CALL(errcode_res);
-    cl_mem cs_mem = clCreateBuffer(context, CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * n, cs.data(), &errcode_res);
+    cl_mem cs_mem = clCreateBuffer(context, CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR, sizeof(float) * n, cs.data(), &errcode_res);
     OCL_SAFE_CALL(errcode_res);
 
 
@@ -241,6 +241,14 @@ int main() {
                 throw std::runtime_error("CPU and GPU results differ!");
             }
         }
+        OCL_SAFE_CALL(clReleaseKernel(kernel));
+        OCL_SAFE_CALL(clReleaseProgram(program));
+        OCL_SAFE_CALL(clReleaseMemObject(as_mem));
+        OCL_SAFE_CALL(clReleaseMemObject(bs_mem));
+        OCL_SAFE_CALL(clReleaseMemObject(cs_mem));
+
+        OCL_SAFE_CALL(clReleaseContext(context));
+        OCL_SAFE_CALL(clReleaseCommandQueue(queue));
 
     return 0;
 }
