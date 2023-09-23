@@ -1,6 +1,12 @@
 #include <libutils/misc.h>
 #include <libutils/timer.h>
 #include <libutils/fast_random.h>
+#include <libgpu/context.h>
+#include <libgpu/shared_device_buffer.h>
+#include <list>
+#include <string>
+
+#include "cl/sum_cl.h"
 
 
 template<typename T>
@@ -59,6 +65,47 @@ int main(int argc, char **argv)
 
     {
         // TODO: implement on OpenCL
-        // gpu::Device device = gpu::chooseGPUDevice(argc, argv);
+        gpu::Device device = gpu::chooseGPUDevice(argc, argv);
+        gpu::Context context;
+        context.init(device.device_id_opencl);
+        context.activate();
+
+        gpu::gpu_mem_32u as_buffer;
+        gpu::gpu_mem_32u sum_buffer;
+
+        as_buffer.resizeN(n);
+        sum_buffer.resizeN(1);
+
+        unsigned int workGroupSize = 128;
+        unsigned int global_work_size = (n + workGroupSize - 1) / workGroupSize * workGroupSize;
+        unsigned int n_work_groups = global_work_size / workGroupSize;
+
+        as_buffer.writeN(as.data(), n);
+        const unsigned int init = 0;
+        std::list<std::string> kernel_names = {"atomic_sum",
+                                               "loop_sum",
+                                               "loop_coalesced_sum",
+                                               "sum_local_mem",
+                                               "tree_sum"};
+
+        std::cout << std::endl;
+        for(auto it_kernel_name = kernel_names.begin(); it_kernel_name != kernel_names.end(); ++it_kernel_name)
+        {
+            ocl::Kernel kernel(sum_kernel, sum_kernel_length, it_kernel_name->data());
+            kernel.compile();
+
+            timer t;
+            unsigned int sum = 0;
+            for (int iter = 0; iter < benchmarkingIters; ++iter) {
+                sum_buffer.writeN(&init, 1);
+                kernel.exec(gpu::WorkSize(workGroupSize, global_work_size),
+                            as_buffer, sum_buffer, n);
+                t.nextLap();
+            }
+            sum_buffer.readN(&sum, 1);
+            EXPECT_THE_SAME(reference_sum, sum, "GPU result should be consistent!");
+            std::cout << "GPU " << *it_kernel_name << " : " <<  t.lapAvg() << "+-" << t.lapStd() << " s" << std::endl;
+            std::cout << "GPU " << *it_kernel_name << " : " << (n/1000.0/1000.0) / t.lapAvg() << " millions/s" << std::endl << std::endl;
+        }
     }
 }
