@@ -98,7 +98,7 @@ int main(int argc, char **argv)
             unsigned int sum = 0;
             for (int iter = 0; iter < benchmarkingIters; ++iter) {
                 sum_buffer.writeN(&init, 1);
-                kernel.exec(gpu::WorkSize(workGroupSize, global_work_size),
+                kernel.exec(gpu::WorkSize(workGroupSize, global_work_size / ("loop_sum" == *it_kernel_name ? 32 : 1)),
                             as_buffer, sum_buffer, n);
                 t.nextLap();
             }
