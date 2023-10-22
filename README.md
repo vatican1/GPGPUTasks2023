@@ -2,26 +2,22 @@
 
 [Остальные задания](https://github.com/GPGPUCourse/GPGPUTasks2023/).
 
-# Задание 6. Bitonic sort, prefix sum
+# Задание 7. Radix sort
 
-[![Build Status](https://github.com/GPGPUCourse/GPGPUTasks2023/actions/workflows/cmake.yml/badge.svg?branch=task06&event=push)](https://github.com/GPGPUCourse/GPGPUTasks2023/actions/workflows/cmake.yml)
+[![Build Status](https://github.com/GPGPUCourse/GPGPUTasks2023/actions/workflows/cmake.yml/badge.svg?branch=task07&event=push)](https://github.com/GPGPUCourse/GPGPUTasks2023/actions/workflows/cmake.yml)
 
 0. Сделать fork проекта
-1. Выполнить задания 6.1, 6.2
-2. Отправить **Pull-request** с названием ```Task06 <Имя> <Фамилия> <Аффиляция>``` (указав вывод каждой программы при исполнении на вашем компьютере - в тройных кавычках для сохранения форматирования)
+1. Выполнить задание 7.1
+2. Отправить **Pull-request** с названием ```Task07 <Имя> <Фамилия> <Аффиляция>``` (указав вывод каждой программы при исполнении на вашем компьютере - в тройных кавычках для сохранения форматирования)
 
-**Дедлайн**: 23:59 22 октября.
+**Дедлайн**: 23:59 29 октября.
 
-Задание 6.1. Bitonic sort
+
+Задание 7.1. Radix sort
 =========
 
-Реализуйте bitonic sort для вещественных чисел
+Реализуйте radix sort для unsigned int (используя локальную память).
 
-Файлы: ```src/main_bitonic.cpp``` и ```src/cl/bitonic.cl```
+Не влияет на баллы, но вероятно, что будет интересно сравнить новую сортировку с остальными по скорости. В случае, если вы используете линейный алгоритм для префиксной суммы, то radix sort тоже становится линейным и должен обгонять merge и bitonic sort начиная с какого-то размера массива.
 
-Задание 6.2. Prefix sum
-=========
-
-Реализуйте prefix sum в модели массового параллелизма
-
-Файлы: ```src/main_prefix_sum.cpp``` и ```src/cl/prefix_sum.cl```
+Файлы: ```src/main_radix.cpp``` и ```src/cl/radix.cl```

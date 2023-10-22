@@ -5,7 +5,7 @@
 #include <libutils/timer.h>
 
 // Этот файл будет сгенерирован автоматически в момент сборки - см. convertIntoHeader в CMakeLists.txt:18
-#include "cl/bitonic_cl.h"
+#include "cl/radix_cl.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -32,14 +32,14 @@ int main(int argc, char **argv) {
 
     int benchmarkingIters = 10;
     unsigned int n = 32 * 1024 * 1024;
-    std::vector<float> as(n, 0);
+    std::vector<unsigned int> as(n, 0);
     FastRandom r(n);
     for (unsigned int i = 0; i < n; ++i) {
-        as[i] = r.nextf();
+        as[i] = (unsigned int) r.next(0, std::numeric_limits<int>::max());
     }
     std::cout << "Data generated for n=" << n << "!" << std::endl;
 
-    std::vector<float> cpu_sorted;
+    std::vector<unsigned int> cpu_sorted;
     {
         timer t;
         for (int iter = 0; iter < benchmarkingIters; ++iter) {
@@ -51,12 +51,12 @@ int main(int argc, char **argv) {
         std::cout << "CPU: " << (n / 1000 / 1000) / t.lapAvg() << " millions/s" << std::endl;
     }
     /*
-    gpu::gpu_mem_32f as_gpu;
+    gpu::gpu_mem_32u as_gpu;
     as_gpu.resizeN(n);
 
     {
-        ocl::Kernel bitonic(bitonic_kernel, bitonic_kernel_length, "bitonic");
-        bitonic.compile();
+        ocl::Kernel radix(radix_kernel, radix_kernel_length, "radix");
+        radix.compile();
 
         timer t;
         for (int iter = 0; iter < benchmarkingIters; ++iter) {
