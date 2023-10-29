@@ -2,22 +2,30 @@
 
 [Остальные задания](https://github.com/GPGPUCourse/GPGPUTasks2023/).
 
-# Задание 7. Radix sort
 
-[![Build Status](https://github.com/GPGPUCourse/GPGPUTasks2023/actions/workflows/cmake.yml/badge.svg?branch=task07&event=push)](https://github.com/GPGPUCourse/GPGPUTasks2023/actions/workflows/cmake.yml)
+# Задание 8. SDF
+
+[![Build Status](https://github.com/GPGPUCourse/GPGPUTasks2023/actions/workflows/cmake.yml/badge.svg?branch=task05&event=push)](https://github.com/GPGPUCourse/GPGPUTasks2023/actions/workflows/cmake.yml)
 
 0. Сделать fork проекта
-1. Выполнить задание 7.1
-2. Отправить **Pull-request** с названием ```Task07 <Имя> <Фамилия> <Аффиляция>``` (указав вывод каждой программы при исполнении на вашем компьютере - в тройных кавычках для сохранения форматирования)
+1. Выполнить задание 8
+2. Отправить **Pull-request** с названием ```Task08 <Имя> <Фамилия> <Аффиляция>``` 
 
-**Дедлайн**: 23:59 29 октября.
+**Дедлайн**: 23:59 5 ноября.
 
-
-Задание 7.1. Radix sort
+Задание 8
 =========
 
-Реализуйте radix sort для unsigned int (используя локальную память).
+![Lilmonster](/.figures/capture.gif?raw=true)
 
-Не влияет на баллы, но вероятно, что будет интересно сравнить новую сортировку с остальными по скорости. В случае, если вы используете линейный алгоритм для префиксной суммы, то radix sort тоже становится линейным и должен обгонять merge и bitonic sort начиная с какого-то размера массива.
+Откройте страницу [Shadertoy](https://www.shadertoy.com/new).
 
-Файлы: ```src/main_radix.cpp``` и ```src/cl/radix.cl```
+Скопируйте заготовку, предоставленную в файле ```src/sdf_main.glsl``` в блок с кодом, скомпилируйте, проверьте что появилась простая сцена со сферой и плоскостью
+
+Реализуйте пропущенные ```TODO``` блоки кода, чтобы получить изображение монстрика похожего на пример выше
+
+Если чувствуется вдохновение, то можно добавить какие-то дополнительные элементы, например, научить монстрика моргать, добавить ему пасть, зубки, сделать более интересный задний фон и тд.
+
+Как источник вдохновения можно использовать статьи [Inigo Quilez](https://iquilezles.org/articles/)
+
+Файл: ```src/sdf_main.glsl```
