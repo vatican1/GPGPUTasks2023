@@ -75,9 +75,57 @@ int main(int argc, char **argv)
 			std::cout << "CPU: " << t.lapAvg() << "+-" << t.lapStd() << " s" << std::endl;
 			std::cout << "CPU: " << (n / 1000.0 / 1000.0) / t.lapAvg() << " millions/s" << std::endl;
 		}
+        gpu::Device device = gpu::chooseGPUDevice(argc, argv);
+        gpu::Context context;
+        context.init(device.device_id_opencl);
+        context.activate();
+        {
+            std::vector<unsigned int> result(n, 0);
+            gpu::gpu_mem_32u as_gpu, result_gpu;
+            as_gpu.resizeN(n);
+            result_gpu.resizeN(n);
 
-		{
-			// TODO: implement on OpenCL
-		}
+            ocl::Kernel reduce(prefix_sum_kernel, prefix_sum_kernel_length, "reduce");
+            ocl::Kernel sum(prefix_sum_kernel, prefix_sum_kernel_length, "sum");
+            reduce.compile();
+            sum.compile();
+
+            timer t;
+            for (int iter = 0; iter < benchmarkingIters; ++iter)
+            {
+                as_gpu.writeN(as.data(), n);
+                result_gpu.writeN(result.data(), n);
+                unsigned int work_group_size = 128;
+                unsigned int add = n / 2;
+                gpu::WorkSize work_size_add = gpu::WorkSize(work_group_size, add);
+                t.restart();
+                for (unsigned int block_size = 1; block_size < n; block_size *= 2)
+                {
+                    sum.exec(work_size_add,
+                             as_gpu,
+                             result_gpu,
+                             block_size);
+
+                    reduce.exec(gpu::WorkSize(work_group_size, n / (2 * block_size)),
+                                as_gpu,
+                                block_size,
+                                n);
+                }
+                t.nextLap();
+            }
+            std::cout << "GPU: " << t.lapAvg() << "+-" << t.lapStd() << " s" << std::endl;
+            std::cout << "GPU: " << (n / 1000.0 / 1000.0) / t.lapAvg() << " millions/s" << std::endl;
+
+            result_gpu.readN(result.data(), n-1);
+            unsigned int tmp;
+            as_gpu.readN(&tmp, 1, n-1);
+            result[n - 1] = tmp;
+
+            // Проверяем корректность результатов
+            for (int i = 0; i < n; ++i)
+            {
+                EXPECT_THE_SAME(result[i], reference_result[i], "GPU results should be equal to CPU results!");
+            }
+        }
 	}
 }
